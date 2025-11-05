@@ -254,8 +254,8 @@
 
 ```bash
 # 1. Клонировать репозиторий
-git clone https://github.com/MakazhanAlpamys/Biny-AI.git
-cd Biny-AI
+git clone https://github.com/MakazhanAlpamys/Smart-City-Advisor.git
+cd Smart-City-Advisor
 
 # 2. Установить зависимости Backend
 cd backend
@@ -1086,9 +1086,9 @@ Copyright (c) 2025 Smart City Advisor Team
 
 ## 📞 Контакты
 
-- **GitHub Repository**: [MakazhanAlpamys/Biny-AI](https://github.com/MakazhanAlpamys/Biny-AI)
-- **Issues**: [GitHub Issues](https://github.com/MakazhanAlpamys/Biny-AI/issues)
-- **Discussions**: [GitHub Discussions](https://github.com/MakazhanAlpamys/Biny-AI/discussions)
+- **GitHub Repository**: [MakazhanAlpamys/Smart-City-Advisor](https://github.com/MakazhanAlpamys/Smart-City-Advisor)
+- **Issues**: [GitHub Issues](https://github.com/MakazhanAlpamys/Smart-City-Advisor/issues)
+- **Discussions**: [GitHub Discussions](https://github.com/MakazhanAlpamys/Smart-City-Advisor/discussions)
 
 ### Команда разработки
 
