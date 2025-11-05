@@ -175,7 +175,7 @@ export default function EventsPanel({ userLocation }: EventsPanelProps) {
 
           <div className="pt-2 border-t border-purple-200">
             <p className="text-xs text-slate-500 text-center">
-              💡 Источник: {events[0]?.source === 'ticketon.kz' ? 'Ticketon.kz (реальные данные)' : 'Примеры событий (Ticketon недоступен)'}
+              💡 Источник: Sxodim & Ticketon
             </p>
           </div>
         </div>

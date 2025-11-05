@@ -21,11 +21,22 @@ interface POI {
   lon: number;
   distance: number | null;
   workingHours?: string;
+  why?: string;
+  time?: string;
+  action?: string;
+  geocoded?: boolean;
+}
+
+interface RoutePoint {
+  lat: number;
+  lon: number;
+  name: string;
 }
 
 interface MapComponentProps {
   userLocation: { latitude: number; longitude: number } | null;
   pois: POI[];
+  route?: RoutePoint[];
 }
 
 // Component to update map view when location changes
@@ -57,12 +68,13 @@ const poiIcon = new L.Icon({
   shadowSize: [41, 41]
 });
 
-export default function MapComponent({ userLocation, pois }: MapComponentProps) {
+export default function MapComponent({ userLocation, pois, route = [] }: MapComponentProps) {
   const [selectedPoi, setSelectedPoi] = useState<string | null>(null);
   
   console.log('🗺️ MapComponent render:', { 
     userLocation, 
     poisCount: pois.length, 
+    routePoints: route.length,
     pois: pois.map(p => ({ id: p.id, name: p.name, lat: p.lat, lon: p.lon }))
   });
   
@@ -84,6 +96,9 @@ export default function MapComponent({ userLocation, pois }: MapComponentProps) 
       [poi.lat, poi.lon]
     ];
   };
+
+  // Convert full route to Leaflet format
+  const fullRoutePoints: [number, number][] = route.map(point => [point.lat, point.lon]);
 
   return (
     <div className="w-full h-full rounded-lg overflow-hidden border border-slate-200">
@@ -129,13 +144,39 @@ export default function MapComponent({ userLocation, pois }: MapComponentProps) 
           </>
         )}
 
+        {/* Full route polyline (if available) */}
+        {fullRoutePoints.length > 1 && (
+          <>
+            {/* Shadow/outline for better visibility */}
+            <Polyline
+              positions={fullRoutePoints}
+              pathOptions={{
+                color: '#065f46',
+                weight: 7,
+                opacity: 0.4,
+                dashArray: '10, 5'
+              }}
+            />
+            {/* Main route line */}
+            <Polyline
+              positions={fullRoutePoints}
+              pathOptions={{
+                color: '#10b981',
+                weight: 5,
+                opacity: 0.9,
+                dashArray: '10, 5'
+              }}
+            />
+          </>
+        )}
+
         {/* POI markers */}
         {pois.map((poi) => {
           const routePoints = getRoutePoints(poi.id);
           
           return (
             <Fragment key={poi.id}>
-              {/* Route line if POI is selected */}
+              {/* Route line if POI is selected (individual) */}
               {routePoints.length > 0 && (
                 <Polyline
                   positions={routePoints}
@@ -156,9 +197,16 @@ export default function MapComponent({ userLocation, pois }: MapComponentProps) 
                   click: () => setSelectedPoi(poi.id === selectedPoi ? null : poi.id)
                 }}
               >
-                <Popup maxWidth={300}>
+                <Popup maxWidth={350}>
                   <div className="p-2">
-                    <h3 className="font-semibold text-slate-900 mb-2">{poi.name}</h3>
+                    <h3 className="font-semibold text-slate-900 mb-2 flex items-center gap-2">
+                      {poi.name}
+                      {poi.geocoded && (
+                        <span className="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded">
+                          AI ✨
+                        </span>
+                      )}
+                    </h3>
                     <div className="space-y-1 text-sm">
                       <p className="text-slate-600">
                         <span className="font-medium">📍</span> {poi.address || 'Адрес не указан'}
@@ -174,6 +222,21 @@ export default function MapComponent({ userLocation, pois }: MapComponentProps) 
                       {poi.workingHours && (
                         <p className="text-slate-600 text-xs">
                           <span className="font-medium">🕐</span> {poi.workingHours}
+                        </p>
+                      )}
+                      {poi.why && (
+                        <p className="text-slate-700 text-sm mt-2 pt-2 border-t border-slate-200">
+                          <span className="font-medium">💡 Почему:</span> {poi.why}
+                        </p>
+                      )}
+                      {poi.time && (
+                        <p className="text-slate-600 text-xs">
+                          <span className="font-medium">⏱</span> {poi.time}
+                        </p>
+                      )}
+                      {poi.action && (
+                        <p className="text-slate-700 text-sm">
+                          <span className="font-medium">✨ Что делать:</span> {poi.action}
                         </p>
                       )}
                       {userLocation && (

@@ -10,13 +10,67 @@ async function scrapeTicketonEvents() {
   try {
     console.log('🎭 Fetching events from ticketon.kz...');
     
-    // Ticketon.kz blocks automated requests with redirects
-    // Using mock data as fallback until proper API access is configured
-    console.log('⚠️ Using mock data (Ticketon requires anti-bot bypass)');
-    return getEnhancedMockEvents();
+    // Try real scraping with proper headers
+    const response = await axios.get('https://ticketon.kz/astana', {
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+        'Accept-Language': 'ru-RU,ru;q=0.9,en-US;q=0.8,en;q=0.7',
+        'Accept-Encoding': 'gzip, deflate, br',
+        'Connection': 'keep-alive',
+        'Referer': 'https://ticketon.kz/',
+        'Cache-Control': 'max-age=0'
+      },
+      timeout: 10000,
+      maxRedirects: 5
+    });
+
+    const $ = cheerio.load(response.data);
+    const events = [];
+
+    // Try to parse event cards
+    $('.event-card, .poster, .event-item, [class*="event"]').each((index, element) => {
+      try {
+        const $event = $(element);
+        const title = $event.find('h3, h2, .title, .event-title').first().text().trim() ||
+                     $event.find('a').first().attr('title') ||
+                     $event.text().trim().split('\n')[0];
+
+        if (title && title.length > 3) {
+          const eventText = $event.text();
+          const { date, time } = parseDateTimeFromText(eventText);
+          const category = extractCategory(title, $event.find('a').attr('href') || '');
+          const venue = extractVenue(eventText);
+          const price = extractPrice(eventText);
+
+          events.push({
+            id: `ticketon_${Date.now()}_${index}`,
+            title: cleanText(title),
+            date,
+            time,
+            venue: venue || 'Уточняйте',
+            category,
+            price,
+            description: cleanText(title),
+            source: 'ticketon.kz'
+          });
+        }
+      } catch (err) {
+        // Skip problematic elements
+      }
+    });
+
+    if (events.length > 0) {
+      console.log(`✅ Scraped ${events.length} events from ticketon.kz`);
+      return events.slice(0, 20);
+    } else {
+      console.log('⚠️ No events found on ticketon.kz, using mock data');
+      return getEnhancedMockEvents();
+    }
 
   } catch (error) {
     console.error('❌ Error scraping Ticketon:', error.message);
+    console.log('⚠️ Falling back to mock data');
     return getEnhancedMockEvents();
   }
 }
