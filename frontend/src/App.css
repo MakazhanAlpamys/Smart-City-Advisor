@@ -1,0 +1,80 @@
+/* Minimal custom styles - most styling via Tailwind */
+
+.prose p {
+  margin: 0;
+  line-height: 1.6;
+}
+
+.prose p + p {
+  margin-top: 0.5rem;
+}
+
+/* Animation for typing indicator */
+@keyframes bounce {
+  0%, 80%, 100% {
+    transform: translateY(0);
+  }
+  40% {
+    transform: translateY(-8px);
+  }
+}
+
+.animate-bounce {
+  animation: bounce 1.4s infinite;
+}
+
+/* Leaflet map container */
+.leaflet-container {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+}
+
+/* Leaflet popup customization */
+.leaflet-popup-content-wrapper {
+  border-radius: 12px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.leaflet-popup-content {
+  margin: 8px;
+}
+
+.leaflet-popup-tip {
+  box-shadow: none;
+}
+
+/* Range slider styling */
+input[type="range"].slider {
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+input[type="range"].slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  background: #2563eb;
+  cursor: pointer;
+  border-radius: 50%;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+input[type="range"].slider::-moz-range-thumb {
+  width: 16px;
+  height: 16px;
+  background: #2563eb;
+  cursor: pointer;
+  border-radius: 50%;
+  border: none;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+input[type="range"].slider::-webkit-slider-track {
+  background: linear-gradient(to right, #3b82f6 0%, #3b82f6 var(--value), #e2e8f0 var(--value), #e2e8f0 100%);
+  border-radius: 4px;
+}
+
+input[type="range"].slider::-moz-range-track {
+  background: #e2e8f0;
+  border-radius: 4px;
+}
